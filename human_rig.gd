@@ -9,14 +9,18 @@ static var cached_scenes: Dictionary = {}
 func get_cached_human(res_path: String) -> Node3D:
 	if cached_scenes.has(res_path) and is_instance_valid(cached_scenes[res_path]):
 		return cached_scenes[res_path].duplicate()
-	var abs_path = ProjectSettings.globalize_path(res_path)
-	if not FileAccess.file_exists(abs_path):
-		return null
-	var doc = GLTFDocument.new()
-	var state = GLTFState.new()
-	if doc.append_from_file(abs_path, state) != OK:
-		return null
-	var scene = doc.generate_scene(state)
+	var scene: Node = null
+	if ResourceLoader.exists(res_path):
+		var packed = load(res_path)
+		if packed is PackedScene:
+			scene = packed.instantiate()
+	if scene == null and FileAccess.file_exists(res_path):
+		var bytes = FileAccess.get_file_as_bytes(res_path)
+		if bytes.size() > 0:
+			var doc = GLTFDocument.new()
+			var state = GLTFState.new()
+			if doc.append_from_buffer(bytes, res_path.get_base_dir() + "/", state) == OK:
+				scene = doc.generate_scene(state)
 	if scene:
 		cached_scenes[res_path] = scene
 		return scene.duplicate()

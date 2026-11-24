@@ -1,14 +1,21 @@
 extends RefCounted
 
 static func load_fitted_glb(res_path: String, target_height: float, bottom_y: float = 0.0, rot_y: float = 0.0, align_length_to_z: bool = false, tint_paint: Color = Color(-1, -1, -1)) -> Node3D:
-	var abs_path = ProjectSettings.globalize_path(res_path)
-	if not FileAccess.file_exists(abs_path):
-		return null
-	var doc = GLTFDocument.new()
-	var state = GLTFState.new()
-	if doc.append_from_file(abs_path, state) != OK:
-		return null
-	var raw = doc.generate_scene(state)
+	var raw: Node = null
+
+	if ResourceLoader.exists(res_path):
+		var packed = load(res_path)
+		if packed is PackedScene:
+			raw = packed.instantiate()
+
+	if raw == null and FileAccess.file_exists(res_path):
+		var bytes = FileAccess.get_file_as_bytes(res_path)
+		if bytes.size() > 0:
+			var doc = GLTFDocument.new()
+			var state = GLTFState.new()
+			if doc.append_from_buffer(bytes, "", state) == OK:
+				raw = doc.generate_scene(state)
+
 	if raw == null:
 		return null
 
