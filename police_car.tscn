@@ -1,0 +1,85 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://police_car.gd" id="1_pc"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(2.0, 0.8, 4.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cop"]
+albedo_color = Color(0.08, 0.08, 0.1, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_1"]
+material = SubResource("StandardMaterial3D_cop")
+size = Vector3(2.0, 0.8, 4.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_siren"]
+albedo_color = Color(1, 0.1, 0.1, 1)
+emission_enabled = true
+emission = Color(1, 0.2, 0.2, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tire"]
+albedo_color = Color(0.08, 0.08, 0.09, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_tire"]
+material = SubResource("StandardMaterial3D_tire")
+top_radius = 0.4
+bottom_radius = 0.4
+height = 0.28
+
+[sub_resource type="BoxMesh" id="BoxMesh_siren"]
+material = SubResource("StandardMaterial3D_siren")
+size = Vector3(1.1, 0.2, 0.3)
+
+[node name="PoliceCar" type="VehicleBody3D"]
+mass = 1350.0
+script = ExtResource("1_pc")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+shape = SubResource("BoxShape3D_1")
+
+[node name="BodyMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+mesh = SubResource("BoxMesh_1")
+
+[node name="SirenMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95, 0)
+mesh = SubResource("BoxMesh_siren")
+
+[node name="WheelFL" type="VehicleWheel3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0, 0.3, 1.3)
+use_as_traction = true
+use_as_steering = true
+wheel_radius = 0.4
+
+[node name="TireMesh" type="MeshInstance3D" parent="WheelFL"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("CylinderMesh_tire")
+
+[node name="WheelFR" type="VehicleWheel3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0, 0.3, 1.3)
+use_as_traction = true
+use_as_steering = true
+wheel_radius = 0.4
+
+[node name="TireMesh" type="MeshInstance3D" parent="WheelFR"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("CylinderMesh_tire")
+
+[node name="WheelRL" type="VehicleWheel3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0, 0.3, -1.3)
+use_as_traction = true
+wheel_radius = 0.4
+
+[node name="TireMesh" type="MeshInstance3D" parent="WheelRL"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("CylinderMesh_tire")
+
+[node name="WheelRR" type="VehicleWheel3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0, 0.3, -1.3)
+use_as_traction = true
+wheel_radius = 0.4
+
+[node name="TireMesh" type="MeshInstance3D" parent="WheelRR"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("CylinderMesh_tire")

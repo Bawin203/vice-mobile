@@ -1,0 +1,99 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://traffic_car.gd" id="1_tc"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(1.9, 0.8, 4.0)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_taxi"]
+albedo_color = Color(0.95, 0.75, 0.1, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_1"]
+material = SubResource("StandardMaterial3D_taxi")
+size = Vector3(1.9, 0.8, 4.0)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w"]
+albedo_color = Color(0.1, 0.1, 0.1, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_1"]
+material = SubResource("StandardMaterial3D_w")
+top_radius = 0.38
+bottom_radius = 0.38
+height = 0.28
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_1"]
+radius = 3.6
+
+[node name="TrafficCar" type="VehicleBody3D"]
+mass = 1150.0
+script = ExtResource("1_tc")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+shape = SubResource("BoxShape3D_1")
+
+[node name="BodyMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+mesh = SubResource("BoxMesh_1")
+
+[node name="WheelFL" type="VehicleWheel3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.98, 0.3, 1.25)
+use_as_traction = true
+use_as_steering = true
+wheel_radius = 0.38
+
+[node name="M" type="MeshInstance3D" parent="WheelFL"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("CylinderMesh_1")
+
+[node name="WheelFR" type="VehicleWheel3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.98, 0.3, 1.25)
+use_as_traction = true
+use_as_steering = true
+wheel_radius = 0.38
+
+[node name="M" type="MeshInstance3D" parent="WheelFR"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("CylinderMesh_1")
+
+[node name="WheelRL" type="VehicleWheel3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.98, 0.3, -1.25)
+use_as_traction = true
+wheel_radius = 0.38
+
+[node name="M" type="MeshInstance3D" parent="WheelRL"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("CylinderMesh_1")
+
+[node name="WheelRR" type="VehicleWheel3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.98, 0.3, -1.25)
+use_as_traction = true
+wheel_radius = 0.38
+
+[node name="M" type="MeshInstance3D" parent="WheelRR"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("CylinderMesh_1")
+
+[node name="CameraPivot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+
+[node name="SpringArm3D" type="SpringArm3D" parent="CameraPivot"]
+transform = Transform3D(-1, 0, 8.74228e-08, 2.26267e-08, 0.965926, 0.258819, -8.44439e-08, 0.258819, -0.965926, 0, 0, 0)
+spring_length = 7.0
+
+[node name="Camera3D" type="Camera3D" parent="CameraPivot/SpringArm3D"]
+
+[node name="ExitPoint" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.1, 0.5, 0)
+
+[node name="FrontSensor" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 2.1)
+target_position = Vector3(0, 0, 8)
+
+[node name="DoorZone" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DoorZone"]
+shape = SubResource("SphereShape3D_1")
+
+[connection signal="body_entered" from="DoorZone" to="." method="_on_door_body_entered"]
+[connection signal="body_exited" from="DoorZone" to="." method="_on_door_body_exited"]
